@@ -352,7 +352,7 @@ CREATE TABLE IF NOT EXISTS world_state (
     current_hour            INTEGER NOT NULL DEFAULT 8 CHECK (current_hour BETWEEN 0 AND 23),
     current_minute          INTEGER NOT NULL DEFAULT 0 CHECK (current_minute BETWEEN 0 AND 59),
     season                  TEXT NOT NULL DEFAULT 'winter' CHECK (season IN (
-                                'winter', 'spring', 'summer', 'fall'
+                                'winter', 'spring', 'summer', 'autumn'
                             )),
     weather_by_location     TEXT DEFAULT '{}',   -- JSON: {location_id: {type, established, last_roll_hour}}
     active_session_id       INTEGER REFERENCES sessions(id),
@@ -648,5 +648,5 @@ CREATE INDEX idx_era_number ON era_summaries(era_number);
 -- ============================================================================
 
 INSERT INTO world_state (id, current_date, current_hour, season, political_summary)
-VALUES (1, '1525-01-01', 8, 'winter',
-    'Baldur''s Gate is governed by the Council of Four: Grand Duchess Jade Ravenshade, Duchess Olivia Caldwell, Duke Oriel Redlocks, and Duke Phillipe-Michael Vammas. The Flaming Fist maintains order. The Blue Dagger controls the underworld. The Gilded Gauntlet operates from Bloomridge.');
+VALUES (1, '1525-01-01', 10, 'winter',
+    'Baldur''s Gate remains outwardly orderly under the Council of Four, but corruption is routine beneath the surface. The Flaming Fist holds the walls, the Watch guards noble privilege, the Blue Dagger manages the underworld''s balance, and the Gilded Gauntlet continues its contracts from Bloomridge without public crisis.');

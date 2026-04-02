@@ -297,6 +297,7 @@ async def list_locations(
     parent_id: Optional[int] = None,
     type: Optional[str] = None,
     name: Optional[str] = None,
+    is_public: Optional[int] = None,
     is_secret: Optional[int] = None,
 ):
     from server.models.location import get_locations
@@ -304,7 +305,11 @@ async def list_locations(
     if parent_id is not None: filters["parent_id"] = parent_id
     if type: filters["type"] = type
     if name: filters["name"] = name
-    if is_secret is not None: filters["is_secret"] = is_secret
+    if is_public is not None:
+        filters["is_public"] = is_public
+    elif is_secret is not None:
+        # Compatibility alias: secret=1 means public=0, secret=0 means public=1.
+        filters["is_public"] = 0 if int(is_secret) == 1 else 1
     return await get_locations(filters)
 
 @router.get("/locations/{location_id}")

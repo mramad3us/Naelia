@@ -2,9 +2,9 @@
     "game": {
         "campaign_name": "Naelia's Chronicles",
         "starting_date_dr": "1525-01-01",
-        "starting_hour": 8,
+        "starting_hour": 10,
         "starting_season": "winter",
-        "starting_location": "Baldur's Gate"
+        "starting_location": "Naelia's Manor"
     },
     "player": {
         "physical_dice": false,
@@ -21,7 +21,6 @@
         "background_events_enabled": true
     },
     "session": {
-        "auto_log_events": true,
         "archival_trigger_sessions": 10,
         "max_dice_rolls_kept": 500,
         "era_summary_min_words": 500

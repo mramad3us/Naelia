@@ -55,6 +55,7 @@ def seed_database():
     seed_plot_threads(db)
     seed_guild_contracts(db)
     seed_npc_schedules(db)
+    seed_world_state(db)
 
     db.commit()
     db.close()
@@ -151,12 +152,14 @@ def seed_locations(db: sqlite3.Connection):
         (312, "Vammas Estate", 211, "building", "Patriar mansion of the Vammas family in Manorborn."),
         (313, "Caldwell Estate", 211, "building", "Patriar mansion of the Caldwell family in Manorborn."),
         (314, "Redlocks Estate", 211, "building", "Patriar mansion of the Redlocks family in Manorborn."),
+        (315, "Naelia's Manor", 211, "building", "A serene Upper City manor in Manorborn granted to Naelia. Its upper rooms are warded for privacy, and a high observatory-salon is arranged for long scrying sessions overlooking both the city and the astral sea beyond."),
 
         # Extraplanar Locations
         (400, "Seraphine's Palace", 2, "building", "Island in an Astral Dominion forged by Seraphine. Only visible to those who know of it. Warded with Epic Magic. Over 1,000 followers. Time does not affect residents."),
         (401, "Seraphine's Glade", 400, "room", "Misty glade within Seraphine's Palace where she has absolute control over reality. Her lair."),
         (402, "Crypt of the Forgotten", 100, "dungeon", "Dangerous dungeon near Baldur's Gate guarded by Ommell Siobarek. Naelia receives tribute from it."),
         (403, "Demonweb Pits", 6, "building", "Lolth's domain in the 66th layer of the Abyss."),
+        (404, "Seraphine's Cove", 400, "room", "A quiet moonlit cove tucked within Seraphine's domain, half shore and half dream. It serves as a private refuge for Naelia and Seraphine away from the Material Plane."),
 
         # Wilderness
         (500, "Cloak Wood", 30, "wilderness", "Dense forest south of Baldur's Gate. Home to Mad Lula Soilmind's swamp shack."),
@@ -357,7 +360,7 @@ def _build_all_characters() -> list[dict]:
             {"name": "Antimagic Area", "description": "30-ft radius antimagic sphere."},
             {"name": "Cast Superior Shield", "description": "20-ft radius, 120 damage absorption, full cover."}
         ]),
-        "current_location_id": 100,
+        "current_location_id": 315,
         "status": "alive",
         "guild_rank": None, "guild_tokens": 0,
         "lifestyle_daily_gp": 156176,
@@ -423,7 +426,7 @@ def _build_all_characters() -> list[dict]:
             {"name": "Phantasmal Harpstrings", "description": "Invisible strings within 60 ft. DC 30 DEX with disadvantage or restrained."},
             {"name": "Overwhelming Authority", "description": "Any save or roll she makes has advantage in her glade."}
         ]),
-        "current_location_id": 400,
+        "current_location_id": 404,
         "status": "alive",
         "importance": 1, "is_public": 0,
         "appearance_text": "Ethereal, hauntingly beautiful young woman with otherworldly charm. Flowing translucent gown woven from moonlight and mist. Jet black hair cascading in waves. Eyes that glow with soft luminescent amber/orange light. Carries a delicate ornately carved harp.",
@@ -523,7 +526,7 @@ def _build_all_characters() -> list[dict]:
         "str": 10, "dex": 10, "con": 10, "int": 10, "wis": 10, "cha": 10,
         "hp_max": 100, "hp_current": 100, "ac": 15,
         "speed": "30 ft.", "proficiency_bonus": 6,
-        "current_location_id": 400,
+        "current_location_id": 404,
         "status": "alive",
         "importance": 2, "is_public": 0,
         "appearance_text": "White/platinum blonde hair with braids and gold accessories, pale yellow/gold eyes, gold jewelry (earrings, necklaces, forehead ornament), orange/amber Calishite clothing.",
@@ -542,7 +545,7 @@ def _build_all_characters() -> list[dict]:
         "str": 10, "dex": 10, "con": 10, "int": 10, "wis": 10, "cha": 10,
         "hp_max": 100, "hp_current": 100, "ac": 15,
         "speed": "30 ft.", "proficiency_bonus": 6,
-        "current_location_id": 400,
+        "current_location_id": 404,
         "status": "alive",
         "importance": 2, "is_public": 0,
         "appearance_text": "Identical twin to Amirah. White/platinum hair, pale yellow/gold eyes, gold jewelry and headpieces, Calishite-style clothing in orange, gold, white, and purple tones.",
@@ -588,7 +591,7 @@ def _build_all_characters() -> list[dict]:
             {"name": "Disrupt Life", "cost": 2, "description": "Each non-undead in 20 ft: DC 23 CON, 6d6+7 necrotic or half"},
             {"name": "Frightening Gaze", "cost": 1, "description": "One creature in 10 ft: DC 23 WIS or frightened 1 min"}
         ]}),
-        "current_location_id": 100,
+        "current_location_id": 402,
         "status": "alive",
         "importance": 2, "is_public": 0,
         "appearance_text": "Decayed face with glowing red eyes, sparse gray beard, golden elven half-crown, magnificent purple robes with faintly glowing arcane symbols, holding a black orb.",
@@ -1618,13 +1621,13 @@ def seed_plot_threads(db: sqlite3.Connection):
 
     plots = [
         (1, "The Ravenshade Murders", "active", 1,
-         "Yuuto Ravenshade and wife Sibyll were assassinated in 1509 by unknown forces. Open Gold rank Gauntlet contract worth 1,000,000gp for actionable intel. Whispers connect the Third Lotus monk-assassins. Contract still active and unsolved."),
-        (2, "The Coven of Webs", "dormant", 2,
-         "Duchess Olivia Caldwell and Kingpin Psyche Giannini are secretly Mothers in the Coven of Webs, worshipping Lolth. They've infiltrated both the Council of Four and the Blue Dagger. Their Yochlol handmaids guard their secret."),
+         "Yuuto Ravenshade and wife Sibyll were assassinated in 1509 by unknown forces. The case is cold in public but never abandoned. An open Gold rank Gauntlet contract still offers 1,000,000gp for actionable intelligence, and quiet whispers continue to point toward the Third Lotus."),
+        (2, "The Coven of Webs", "active", 2,
+         "Duchess Olivia Caldwell and Kingpin Psyche Giannini quietly maintain the Coven of Webs beneath the city's daily routines. Their influence is real but carefully hidden, corrupting decisions without creating immediate public panic."),
         (3, "The Cult of Vecna Returns", "dormant", 2,
-         "Zorathar the Eternal, an Elder Lich (CR 25), is believed to be a major lieutenant in a reborn Cult of Vecna seeking to bring back the Archlich."),
+         "Zorathar the Eternal, an Elder Lich of the Crypt of the Forgotten, is rumored to have ties to a reborn Cult of Vecna. Nothing points to immediate action, but the possibility remains campaign-shaping."),
         (4, "Naelia's Arrival", "active", 1,
-         "Naelia An'Ohren has arrived in Baldur's Gate as the Avatar of the Lady / Silver Queen. Her coronation and the revelation of her divine nature will reshape the power dynamics of the entire city."),
+         "Naelia An'Ohren is established in Baldur's Gate but not yet publicly ascendant. The city is still adjusting to her presence in subtle ways as nobles, guilds, clergy, and criminals try to decide what she means for the existing order."),
         (5, "The Beast's Past", "dormant", 3,
          "Razaaz (The Beast) is a Rakshasa leading the Blue Dagger. His history with Seraphine is undefined and potentially campaign-shaping."),
         (6, "The Lost Platinum Coin", "dormant", 4,
@@ -1659,6 +1662,8 @@ def seed_plot_threads(db: sqlite3.Connection):
         (1, "Alim Thunderfist posted an open Gold rank contract: 1,000,000gp for actionable intel. He waived the 30,000,000gp commission from his own stake.", 1, None, None, "Public knowledge"),
         (2, "Duchess Caldwell's youthful appearance despite age 64 fuels city rumors.", 1, None, None, "Common gossip"),
         (2, "Olivia's handmaids are actually Yochlol — fiend servants of Lolth.", 0, None, None, "Known only to the Coven"),
+        (4, "Naelia spends long quiet hours scrying on the Gilded Gauntlet's main hall, watching recruits choose their first contracts.", 1, None, 1, "Private routine"),
+        (4, "Several young adventurers in the hall have begun calling their unseen good fortune 'the Silver Queen's luck.'", 0, None, None, "Guild rumor"),
     ]
     c.executemany(
         "INSERT INTO plot_clues (plot_thread_id, description, is_discovered, discovered_session_id, discovered_by_character_id, source_description) VALUES (?, ?, ?, ?, ?, ?)",
@@ -1673,16 +1678,22 @@ def seed_plot_threads(db: sqlite3.Connection):
 # ============================================================================
 
 def seed_guild_contracts(db: sqlite3.Connection):
-    """Seed the open Ravenshade contract."""
+    """Seed routine contract board activity at the Gilded Gauntlet."""
     c = db.cursor()
-    c.execute(
+    contracts = [
+        ("Ravenshade Investigation", "Actionable intel on the assassination of Yuuto Ravenshade and wife in 1509. Thunderfist waived the 30,000,000gt commission from his own stake.", 20, "gold", 0, 0, 1000000, "available", "Available contract. No stake required. Special rules: posted by Guildmaster."),
+        ("Missing Apothecary's Son", "A Lower City apothecary seeks the return of her son, last seen gambling at the Low Lantern and boasting about easy coin in Brampton.", 5, "bronze", 2500, 15000, 500, "available", "Routine missing-person work with possible criminal entanglements."),
+        ("Warehouse Ledger Discrepancy", "A Bloomridge merchant quietly requests proof that a trusted clerk is skimming inventory through Gray Harbor smugglers.", 7, "silver", 5000, 35000, 1200, "available", "Discreet investigation favored over violence."),
+        ("Escort to Wyrm's Crossing", "A perfumer's caravan needs a respectable escort through Outer City roads and back before nightfall.", 4, "bronze", 1000, 8000, 250, "available", "Good first contract for recruits who can handle minor ambushes."),
+        ("Undercity Drain Survey", "Guild surveyors need protection while inspecting a collapsed drainage run near Mudbrook after unusual sounds were reported below.", 10, "silver", 10000, 65000, 2500, "available", "Likely monsters, smugglers, or both. No immediate city-wide threat."),
+    ]
+    c.executemany(
         """INSERT INTO guild_contracts (title, description, cr_tier, rank_required,
            stake_gt, reward_gt, reward_gp, status, notes)
            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
-        ("Ravenshade Investigation", "Actionable intel on the assassination of Yuuto Ravenshade and wife in 1509. Thunderfist waived the 30,000,000gt commission from his own stake.",
-         20, "gold", 0, 0, 1000000, "available", "Open contract. No stake required. Special rules: posted by Guildmaster.")
+        contracts,
     )
-    print("  Seeded 1 guild contract")
+    print(f"  Seeded {len(contracts)} guild contracts")
 
 
 # ============================================================================
@@ -1690,22 +1701,39 @@ def seed_guild_contracts(db: sqlite3.Connection):
 # ============================================================================
 
 def seed_npc_schedules(db: sqlite3.Connection):
-    """Seed basic NPC schedules."""
+    """Seed routine NPC schedules that make the city feel alive."""
     c = db.cursor()
     schedules = [
         # Tara - almost never leaves her shop
         (3, None, 0, 23, "In her magic shop", 306),
         # Alim Thunderfist - at the guildhall
         (4, None, 6, 22, "At the Gilded Gauntlet guildhall", 300),
-        (4, None, 22, 6, "Meditating in private quarters above guildhall", 300),
+        (4, None, 22, 23, "Meditating in private quarters above guildhall", 300),
+        # Naelia and Seraphine's private routines
+        (1, None, 8, 13, "Scrying on the Gilded Gauntlet main hall from her manor to watch recruits choose work", 315),
+        (1, None, 13, 18, "Withdrawing from the physical plane to rest and reflect in Seraphine's Cove", 404),
+        (2, None, 9, 14, "Quietly observing guild operations as Arthenia's unseen hand", 300),
+        (2, None, 14, 23, "Retreating to Seraphine's Cove for private counsel and amusements", 404),
+        (5, None, 10, 18, "Attending Seraphine in the cove and receiving discreet petitioners", 404),
+        (6, None, 18, 23, "Patrolling Seraphine's retreat and watching for threats", 404),
         # Tomas Benedict - at Lady's Hall
         (50, None, 6, 20, "Conducting services and counseling at Lady's Hall", 304),
         # Gilas Benthey - at the Low Lantern
-        (56, None, 14, 2, "Managing the Low Lantern", 305),
+        (56, None, 14, 23, "Managing the Low Lantern", 305),
         # Earow Baker - at Basilisk Gate
         (52, None, 6, 18, "On guard duty at Basilisk Gate", 222),
         # Tima - at Elfsong Tavern
         (54, None, 6, 22, "Working at the Elfsong Tavern", 309),
+        # Routine city motion
+        (12, None, 9, 13, "Receiving petitioners and reviewing Ravenshade household business", 311),
+        (13, None, 10, 14, "Holding private meetings and entertaining political guests", 314),
+        (14, None, 10, 13, "Reviewing trade correspondence and council matters", 312),
+        (15, None, 7, 10, "Training in the Ravenshade courtyards", 311),
+        (16, None, 15, 22, "Drinking, gambling, and avoiding difficult truths", 305),
+        (9, None, 20, 23, "Reviewing harbor intelligence before vanishing back into the city's shadows", 226),
+        (80, None, 7, 19, "Greeting recruits and coordinating mundane guild matters", 300),
+        (81, None, 9, 17, "Interviewing promising applicants for Purple Hand assignments", 300),
+        (86, None, 6, 18, "Managing Iron Grip company business and field assignments", 300),
     ]
 
     c.executemany(
@@ -1713,6 +1741,52 @@ def seed_npc_schedules(db: sqlite3.Connection):
         schedules
     )
     print(f"  Seeded {len(schedules)} NPC schedule entries")
+
+
+# ============================================================================
+# WORLD STATE
+# ============================================================================
+
+def seed_world_state(db: sqlite3.Connection):
+    """Seed the initial calm-but-living campaign baseline."""
+    c = db.cursor()
+    weather = {
+        "Baldur's Gate": {
+            "type": "heavy_clouds",
+            "description": "Low winter clouds and a cold harbor wind keep the city grey but functional.",
+            "since_hour": 6,
+        },
+        "Upper City": {
+            "type": "cold_clear",
+            "description": "Dry winter air and pale light over clean stone and shuttered manors.",
+            "since_hour": 8,
+        },
+        "Bloomridge": {
+            "type": "overcast",
+            "description": "A dim, busy guild district day with no storm threatening the roads.",
+            "since_hour": 8,
+        },
+    }
+    c.execute(
+        """UPDATE world_state
+           SET current_date = ?, current_hour = ?, current_minute = ?, season = ?,
+               weather_by_location = ?, active_session_id = NULL, active_combat_id = NULL,
+               political_summary = ?, notes = ?, last_weather_roll_hour = ?, last_backup_game_date = ?,
+               updated_at = CURRENT_TIMESTAMP
+           WHERE id = 1""",
+        (
+            "1525-01-01",
+            10,
+            0,
+            "winter",
+            j(weather),
+            "Baldur's Gate is stable on the surface and compromised underneath. The Council of Four governs through etiquette, leverage, and quiet vendettas; the Watch preserves Upper City privilege; the Flaming Fist keeps larger violence contained; the Blue Dagger prefers profit over upheaval; and the Gilded Gauntlet's contract board turns steadily in Bloomridge.",
+            "Baseline tone: calm winter routine. Corruption is endemic, faction maneuvering is ongoing, and no singular crisis is imminent. Naelia is at her Manorborn residence, spending the late morning scrying on the Gilded Gauntlet main hall for promising recruits to follow indirectly.",
+            8,
+            None,
+        ),
+    )
+    print("  Seeded world state baseline")
 
 
 # ============================================================================

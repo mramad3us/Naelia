@@ -38,7 +38,7 @@ async def get_all_mechanics() -> list[dict]:
 async def get_guild_contracts(filters: dict | None = None) -> list[dict]:
     """Return guild contracts matching optional filters.
 
-    Supported filter keys: status, difficulty, claimed_by (character_id).
+    Supported filter keys: status, difficulty/rank_required, claimed_by (character_id).
     """
     query = "SELECT * FROM guild_contracts"
     clauses: list[str] = []
@@ -49,8 +49,11 @@ async def get_guild_contracts(filters: dict | None = None) -> list[dict]:
             clauses.append("status = ?")
             params.append(filters["status"])
         if "difficulty" in filters:
-            clauses.append("difficulty = ?")
+            clauses.append("rank_required = ?")
             params.append(filters["difficulty"])
+        if "rank_required" in filters:
+            clauses.append("rank_required = ?")
+            params.append(filters["rank_required"])
         if "claimed_by" in filters:
             clauses.append("claimed_by_character_id = ?")
             params.append(filters["claimed_by"])
@@ -84,17 +87,21 @@ async def create_guild_contract(data: dict) -> int:
     return await execute(
         """
         INSERT INTO guild_contracts
-            (title, description, status, reward_tokens, difficulty,
-             posted_by_character_id)
-        VALUES (?, ?, ?, ?, ?, ?)
+            (title, description, status, reward_gt, rank_required,
+             posted_by_character_id, cr_tier, stake_gt, reward_gp, notes)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """,
         (
             data["title"],
             data.get("description"),
-            data.get("status", "open"),
-            data.get("reward_tokens", 0),
-            data.get("difficulty"),
+            data.get("status", "available"),
+            data.get("reward_tokens", data.get("reward_gt", 0)),
+            data.get("difficulty", data.get("rank_required")),
             data.get("posted_by_character_id"),
+            data.get("cr_tier"),
+            data.get("stake_gt", 0),
+            data.get("reward_gp", 0),
+            data.get("notes"),
         ),
     )
 

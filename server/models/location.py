@@ -23,6 +23,7 @@ async def get_locations(filters: Optional[dict] = None) -> list[dict]:
         type       — exact match on location type
         name       — substring match (LIKE %name%)
         is_public  — 0 or 1
+        is_secret  — compatibility alias; converted by the route layer
     """
     clauses: list[str] = []
     params: list = []

@@ -99,8 +99,8 @@ async def claim_contract(
     )
     if contract is None:
         raise ValueError(f"Contract {contract_id} not found")
-    if contract["status"] != "open":
-        raise ValueError(f"Contract is not open (status: {contract['status']})")
+    if contract["status"] not in {"available", "open"}:
+        raise ValueError(f"Contract is not available for claim (status: {contract['status']})")
 
     await execute(
         "UPDATE guild_contracts SET status = 'claimed', claimed_by_character_id = ?, claimed_at = CURRENT_TIMESTAMP WHERE id = ?",
@@ -123,7 +123,7 @@ async def complete_contract(contract_id: int, session_id: int = None) -> dict:
         raise ValueError(f"Contract {contract_id} not found")
 
     character_id = contract["claimed_by_character_id"]
-    reward = contract["reward_tokens"]
+    reward = contract["reward_gt"]
 
     # Add tokens to character
     await execute(
@@ -148,7 +148,7 @@ async def complete_contract(contract_id: int, session_id: int = None) -> dict:
         "contract_id": contract_id,
         "character": char["name"],
         "reward_tokens": reward,
-        "new_balance": char["guild_tokens"] + reward,
+        "new_balance": char["guild_tokens"],
     }
 
 
