@@ -9,8 +9,7 @@ build/
 venv/
 .venv/
 
-# Database (live copy - only backups are committed)
-server/world.db
+# Database journal/WAL (transient)
 server/world.db-journal
 server/world.db-wal
 
