@@ -28,7 +28,7 @@
     "backup": {
         "auto_backup_on_game_day_change": true,
         "backup_directory": "backups",
-        "max_backups_kept": 100
+        "max_backups_kept": 10
     },
     "server": {
         "host": "127.0.0.1",
