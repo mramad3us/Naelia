@@ -28,5 +28,8 @@ Thumbs.db
 *.swp
 *.swo
 
+# Raw campaign source PDFs (too large for GitHub)
+_Initial Input Data/
+
 # Claude
 .claude/

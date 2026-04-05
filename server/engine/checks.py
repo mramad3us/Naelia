@@ -60,21 +60,47 @@ async def _fetch_character(character_id: int) -> dict:
     return row
 
 
-def _proficiency_bonus_for_skill(
-    skills: dict, skill: str, proficiency_bonus: int
-) -> int:
-    """Return the proficiency-based bonus for a given skill."""
-    if skills is None or skill not in skills:
-        return 0
+def _resolve_skill_modifier(
+    skills: dict, skill: str, ability_mod: int, proficiency_bonus: int
+) -> tuple[int, bool]:
+    """Return (total_modifier, uses_custom_bonus) for a given skill.
 
-    prof_type = skills[skill]
-    if prof_type == "expertise":
-        return proficiency_bonus * 2
-    if prof_type == "proficient":
-        return proficiency_bonus
-    if prof_type == "half":
-        return proficiency_bonus // 2
-    return 0
+    The database stores skills in one of two formats:
+      1. Custom bonus: {"Perception": {"bonus": 82}} — total modifier is the
+         bonus value directly (already includes ability mod + proficiency +
+         any other bonuses).  Return (bonus, True).
+      2. Legacy proficiency type: {"perception": "proficient"} — compute
+         ability_mod + proficiency contribution.  Return (computed, False).
+
+    When uses_custom_bonus is True the caller must NOT add ability_mod again.
+    """
+    if skills is None:
+        return (ability_mod, False)
+
+    # Try case-insensitive match (DB stores "Perception", API may send "perception")
+    entry = None
+    for k, v in skills.items():
+        if k.lower() == skill.lower():
+            entry = v
+            break
+
+    if entry is None:
+        return (ability_mod, False)
+
+    # Format 1: {"bonus": N, ...}
+    if isinstance(entry, dict) and "bonus" in entry:
+        return (entry["bonus"], True)
+
+    # Format 2: "proficient" / "expertise" / "half"
+    if isinstance(entry, str):
+        if entry == "expertise":
+            return (ability_mod + proficiency_bonus * 2, False)
+        if entry == "proficient":
+            return (ability_mod + proficiency_bonus, False)
+        if entry == "half":
+            return (ability_mod + proficiency_bonus // 2, False)
+
+    return (ability_mod, False)
 
 
 def _double_dice_expression(expression: str) -> str:
@@ -106,19 +132,26 @@ async def ability_check(
 
     ability_score = char[ability]
     ability_mod = get_ability_modifier(ability_score)
-    modifier = ability_mod
 
     if skill is not None:
-        modifier += _proficiency_bonus_for_skill(
-            char.get("skills"), skill, char["proficiency_bonus"]
+        modifier, custom = _resolve_skill_modifier(
+            char.get("skills"), skill, ability_mod, char["proficiency_bonus"]
         )
+    else:
+        modifier = ability_mod
+        custom = False
 
     die_result = roll("1d20", advantage=advantage, disadvantage=disadvantage)
+    natural = die_result["kept"][0] if die_result.get("kept") else die_result["total"]
     total = die_result["total"] + modifier
 
-    success: Optional[bool] = None
-    if dc is not None:
+    # Nat 1 always fails, regardless of modifier
+    if natural == 1:
+        success = False
+    elif dc is not None:
         success = total >= dc
+    else:
+        success = None
 
     return {
         "character_name": char["name"],
@@ -126,6 +159,7 @@ async def ability_check(
         "ability": ability,
         "skill": skill,
         "modifier": modifier,
+        "natural_roll": natural,
         "roll": die_result,
         "total": total,
         "dc": dc,
